@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skoop Clock</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="styles.css?v=v1a2b4">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="clock">Clock</button>
+            <button class="tab-btn" data-tab="stopwatch">Stopwatch</button>
+            <button class="tab-btn" data-tab="timer">Timer</button>
+        </nav>
+
+        <main class="content">
+            <!-- Clock Tab -->
+            <section id="clock" class="tab-content active">
+                <div class="clock-display">
+                    <div id="digital-clock" class="time">00:00:00</div>
+                    <div id="date-display" class="date">Wednesday, April 8, 2026</div>
+                </div>
+                <div class="world-clocks">
+                    <h3>World Clocks</h3>
+                    <div id="world-clock-list" class="clock-grid">
+                        <!-- World clocks will be injected here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stopwatch Tab -->
+            <section id="stopwatch" class="tab-content">
+                <div class="stopwatch-display">
+                    <div id="stopwatch-time" class="time">00:00:00.00</div>
+                    <div class="controls">
+                        <button id="sw-start" class="btn primary">Start</button>
+                        <button id="sw-lap" class="btn secondary" disabled>Lap</button>
+                        <button id="sw-reset" class="btn secondary">Reset</button>
+                    </div>
+                    <ul id="lap-list" class="lap-list"></ul>
+                </div>
+            </section>
+
+            <!-- Timer Tab -->
+            <section id="timer" class="tab-content">
+                <div class="timer-setup">
+                    <div class="timer-inputs">
+                        <div class="input-group">
+                            <input type="number" id="timer-h" min="0" max="23" value="0">
+                            <span>h</span>
+                        </div>
+                        <div class="input-group">
+                            <input type="number" id="timer-m" min="0" max="59" value="0">
+                            <span>m</span>
+                        </div>
+                        <div class="input-group">
+                            <input type="number" id="timer-s" min="0" max="59" value="0">
+                            <span>s</span>
+                        </div>
+                    </div>
+                    <div id="timer-display" class="time hidden">00:00:00</div>
+                    <div class="controls">
+                        <button id="timer-start" class="btn primary">Start</button>
+                        <button id="timer-cancel" class="btn secondary hidden">Cancel</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>Skoop Clock &bull; 2026</p>
+        </footer>
+    </div>
+    <script src="script.js?v=v1a2b4"></script>
+</body>
+</html>
