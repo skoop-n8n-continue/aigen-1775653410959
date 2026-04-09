@@ -27,6 +27,17 @@ body {
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    position: relative;
+}
+
+#lightning-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
 }
 
 .app-container {
@@ -38,6 +49,7 @@ body {
     flex-direction: column;
     padding: 2rem;
     position: relative;
+    z-index: 1;
 }
 
 /* Tabs Navigation */
@@ -113,6 +125,30 @@ body {
     margin-bottom: 0.5rem;
     text-shadow: 0 0 20px var(--accent-glow);
     letter-spacing: -2px;
+    animation: electric-glow 5s infinite alternate;
+}
+
+@keyframes electric-glow {
+    0%, 100% {
+        text-shadow: 0 0 20px var(--accent-glow);
+        color: var(--text-light);
+    }
+    92% {
+        text-shadow: 0 0 20px var(--accent-glow);
+        color: var(--text-light);
+    }
+    94% {
+        text-shadow: 0 0 40px var(--primary-color), 0 0 10px #fff;
+        color: #fff;
+    }
+    96% {
+        text-shadow: 0 0 20px var(--accent-glow);
+        color: var(--text-light);
+    }
+    98% {
+        text-shadow: 0 0 40px var(--primary-color), 0 0 10px #fff;
+        color: #fff;
+    }
 }
 
 .date {

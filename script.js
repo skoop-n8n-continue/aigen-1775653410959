@@ -203,6 +203,106 @@ document.addEventListener('DOMContentLoaded', () => {
         timerStartBtn.classList.remove('hidden');
     }
 
+    // Lightning Effect
+    const canvas = document.getElementById('lightning-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+
+    function resizeCanvas() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Lightning {
+        constructor() {
+            this.segments = [];
+            this.create();
+            this.opacity = 1;
+        }
+
+        create() {
+            let x = Math.random() * width;
+            let y = 0;
+            let segmentCount = 15 + Math.random() * 20;
+
+            for (let i = 0; i < segmentCount; i++) {
+                let nextX = x + (Math.random() - 0.5) * 80;
+                let nextY = y + height / segmentCount;
+                this.segments.push({ x1: x, y1: y, x2: nextX, y2: nextY });
+                x = nextX;
+                y = nextY;
+
+                // Chance to branch
+                if (Math.random() < 0.1) {
+                    this.createBranch(x, y, 5);
+                }
+            }
+        }
+
+        createBranch(x, y, count) {
+            for (let i = 0; i < count; i++) {
+                let nextX = x + (Math.random() - 0.5) * 60;
+                let nextY = y + (Math.random() * 40);
+                this.segments.push({ x1: x, y1: y, x2: nextX, y2: nextY });
+                x = nextX;
+                y = nextY;
+            }
+        }
+
+        draw() {
+            ctx.strokeStyle = `rgba(0, 183, 175, ${this.opacity})`;
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#00b7af';
+
+            ctx.beginPath();
+            this.segments.forEach(seg => {
+                ctx.moveTo(seg.x1, seg.y1);
+                ctx.lineTo(seg.x2, seg.y2);
+            });
+            ctx.stroke();
+
+            // Core glow
+            ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
+            ctx.lineWidth = 0.5;
+            ctx.shadowBlur = 0;
+            ctx.beginPath();
+            this.segments.forEach(seg => {
+                ctx.moveTo(seg.x1, seg.y1);
+                ctx.lineTo(seg.x2, seg.y2);
+            });
+            ctx.stroke();
+        }
+
+        update() {
+            this.opacity -= 0.05;
+            return this.opacity > 0;
+        }
+    }
+
+    let lightnings = [];
+
+    function animateLightning() {
+        ctx.clearRect(0, 0, width, height);
+
+        // Randomly add lightning
+        if (Math.random() < 0.01) {
+            lightnings.push(new Lightning());
+        }
+
+        lightnings = lightnings.filter(l => {
+            l.draw();
+            return l.update();
+        });
+
+        requestAnimationFrame(animateLightning);
+    }
+
+    animateLightning();
+
     // Initialization
     initWorldClocks();
     updateClock();
