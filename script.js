@@ -253,10 +253,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         draw() {
-            ctx.strokeStyle = `rgba(0, 183, 175, ${this.opacity})`;
+            ctx.strokeStyle = `rgba(255, 45, 117, ${this.opacity})`;
             ctx.lineWidth = 2;
             ctx.shadowBlur = 15;
-            ctx.shadowColor = '#00b7af';
+            ctx.shadowColor = '#ff2d75';
 
             ctx.beginPath();
             this.segments.forEach(seg => {
