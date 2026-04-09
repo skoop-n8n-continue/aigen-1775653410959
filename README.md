@@ -7,11 +7,13 @@ A modern, responsive clock application featuring:
 - **Timer**: Customizable countdown timer with completion alerts.
 
 ## Design
-- **Theme**: Dark mode with teal (#00b7af) accents.
+- **Theme**: High-energy "Pink Electric" aesthetic.
+- **VFX**: Procedural lightning strikes and dynamic rain effects on a full-screen canvas.
+- **Colors**: Pink (#ff2d75) accents on a dark navy background.
 - **Typography**: Inter for UI and JetBrains Mono for time displays.
 - **Performance**: Optimized with cache-control and versioned assets.
 
 ## Built With
-- Vanilla JavaScript
-- CSS3 (Flexbox & Grid)
+- Vanilla JavaScript (Canvas API)
+- CSS3 (Flexbox & Grid, Animations)
 - HTML5

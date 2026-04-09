@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
         timerStartBtn.classList.remove('hidden');
     }
 
-    // Lightning Effect
+    // Lightning & Rain Effect
     const canvas = document.getElementById('lightning-canvas');
     const ctx = canvas.getContext('2d');
     let width, height;
@@ -215,6 +215,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
+
+    class Raindrop {
+        constructor() {
+            this.reset();
+        }
+
+        reset() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * -height;
+            this.length = 10 + Math.random() * 20;
+            this.speed = 10 + Math.random() * 10;
+            this.opacity = 0.1 + Math.random() * 0.3;
+        }
+
+        update() {
+            this.y += this.speed;
+            if (this.y > height) {
+                this.reset();
+            }
+        }
+
+        draw() {
+            ctx.strokeStyle = `rgba(255, 45, 117, ${this.opacity})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(this.x, this.y + this.length);
+            ctx.stroke();
+        }
+    }
 
     class Lightning {
         constructor() {
@@ -284,9 +314,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let lightnings = [];
+    const raindrops = Array.from({ length: 150 }, () => new Raindrop());
 
-    function animateLightning() {
+    function animate() {
         ctx.clearRect(0, 0, width, height);
+
+        // Draw and update rain
+        raindrops.forEach(drop => {
+            drop.draw();
+            drop.update();
+        });
 
         // Randomly add lightning
         if (Math.random() < 0.01) {
@@ -298,10 +335,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return l.update();
         });
 
-        requestAnimationFrame(animateLightning);
+        requestAnimationFrame(animate);
     }
 
-    animateLightning();
+    animate();
 
     // Initialization
     initWorldClocks();
