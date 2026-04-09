@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const swStartBtn = document.getElementById('sw-start');
     const swLapBtn = document.getElementById('sw-lap');
     const swResetBtn = document.getElementById('sw-reset');
+    const swClearBtn = document.getElementById('sw-clear');
     const swLapList = document.getElementById('lap-list');
 
     function formatTime(ms) {
@@ -108,6 +109,9 @@ document.addEventListener('DOMContentLoaded', () => {
         swStartBtn.textContent = 'Start';
         swStartBtn.className = 'btn primary';
         swLapBtn.disabled = true;
+    });
+
+    swClearBtn.addEventListener('click', () => {
         swLapList.innerHTML = '';
     });
 
@@ -131,6 +135,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const timerInputs = document.querySelector('.timer-inputs');
     const timerStartBtn = document.getElementById('timer-start');
     const timerCancelBtn = document.getElementById('timer-cancel');
+    const timerSound = document.getElementById('timer-sound');
+
+    // Modal Logic
+    const modal = document.getElementById('notification-modal');
+    const modalClose = document.getElementById('modal-close');
+
+    function showNotification(title, message) {
+        document.getElementById('modal-title').textContent = title;
+        document.getElementById('modal-message').textContent = message;
+        modal.classList.remove('hidden');
+    }
+
+    modalClose.addEventListener('click', () => {
+        modal.classList.add('hidden');
+    });
 
     function formatTimerTime(totalSeconds) {
         const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
@@ -164,7 +183,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (timerRemainingSeconds <= 0) {
                 clearInterval(timerInterval);
                 timerInterval = null;
-                alert('Time is up!');
+                timerSound.play().catch(() => {});
+                showNotification('Time is up!', 'Your countdown timer has finished.');
                 resetTimerUI();
             }
         }, 1000);

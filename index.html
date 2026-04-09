@@ -8,7 +8,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <link rel="stylesheet" href="styles.css?v=v1a2b4">
+    <link rel="stylesheet" href="styles.css?v=v4e5f6">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -44,10 +44,13 @@
                         <button id="sw-start" class="btn primary">Start</button>
                         <button id="sw-lap" class="btn secondary" disabled>Lap</button>
                         <button id="sw-reset" class="btn secondary">Reset</button>
+                        <button id="sw-clear" class="btn secondary">Clear Laps</button>
                     </div>
                     <ul id="lap-list" class="lap-list"></ul>
                 </div>
             </section>
+
+            <audio id="timer-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
             <!-- Timer Tab -->
             <section id="timer" class="tab-content">
@@ -76,15 +79,25 @@
         </main>
 
         <footer class="app-footer">
-            <p>Skoop Clock &bull; 2026</p>
+            <p>Skoop Clock • 2026</p>
         </footer>
     </div>
-    <script src="script.js?v=v1a2b4"></script>
+
+    <!-- Notification Modal -->
+    <div id="notification-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-icon">🔔</div>
+            <h2 id="modal-title">Time is up!</h2>
+            <p id="modal-message">Your timer has finished.</p>
+            <button id="modal-close" class="btn primary">Dismiss</button>
+        </div>
+    </div>
+
+    <script src="script.js?v=v4e5f6"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
         navigator.serviceWorker.register('./sw.js')
-          .then(function (reg) { console.log('[PWA] SW registered:', reg.scope); })
           .catch(function (err) { console.warn('[PWA] SW registration failed:', err); });
       });
     }
