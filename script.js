@@ -216,6 +216,36 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
+    class Ripple {
+        constructor(x, y, isBottom = false) {
+            this.x = x;
+            this.y = y;
+            this.radius = 1;
+            this.maxRadius = isBottom ? 15 + Math.random() * 20 : 5 + Math.random() * 10;
+            this.opacity = isBottom ? 0.3 : 0.2;
+            this.speed = isBottom ? 0.5 + Math.random() * 0.5 : 0.3 + Math.random() * 0.3;
+            this.isBottom = isBottom;
+        }
+
+        update() {
+            this.radius += this.speed;
+            this.opacity -= 0.005;
+            return this.opacity > 0 && this.radius < this.maxRadius;
+        }
+
+        draw() {
+            ctx.strokeStyle = `rgba(255, 45, 117, ${this.opacity})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            if (this.isBottom) {
+                ctx.ellipse(this.x, this.y, this.radius * 2, this.radius * 0.5, 0, 0, Math.PI * 2);
+            } else {
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            }
+            ctx.stroke();
+        }
+    }
+
     class Raindrop {
         constructor() {
             this.reset();
@@ -225,13 +255,16 @@ document.addEventListener('DOMContentLoaded', () => {
             this.x = Math.random() * width;
             this.y = Math.random() * -height;
             this.length = 10 + Math.random() * 20;
-            this.speed = 10 + Math.random() * 10;
+            this.speed = 10 + Math.random() * 15;
             this.opacity = 0.1 + Math.random() * 0.3;
         }
 
         update() {
             this.y += this.speed;
             if (this.y > height) {
+                if (Math.random() < 0.4) {
+                    ripples.push(new Ripple(this.x, height - 5, true));
+                }
                 this.reset();
             }
         }
@@ -314,10 +347,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let lightnings = [];
+    let ripples = [];
     const raindrops = Array.from({ length: 150 }, () => new Raindrop());
 
     function animate() {
         ctx.clearRect(0, 0, width, height);
+
+        // Water effect on screen (random hits)
+        if (Math.random() < 0.05) {
+            ripples.push(new Ripple(Math.random() * width, Math.random() * height, false));
+        }
+
+        // Draw and update ripples
+        ripples = ripples.filter(r => {
+            r.draw();
+            return r.update();
+        });
 
         // Draw and update rain
         raindrops.forEach(drop => {
