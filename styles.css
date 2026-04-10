@@ -1,9 +1,9 @@
 :root {
-    --primary-color: #ff2d75;
+    --primary-color: #00b4ff;
     --bg-dark: #10181f;
     --text-light: #ffffff;
     --secondary-color: #6a7071;
-    --accent-glow: rgba(255, 45, 117, 0.3);
+    --accent-glow: rgba(0, 180, 255, 0.3);
     --card-bg: rgba(255, 255, 255, 0.05);
 }
 
@@ -17,7 +17,7 @@
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: var(--bg-dark);
-    background-image: radial-gradient(circle at center, rgba(255, 45, 117, 0.1) 0%, transparent 70%), url('https://skoop-dev-code-agent.s3.us-east-1.amazonaws.com/skoop-n8n-continue%2Faigen-1775653410959%2Fassets%2Fclock_bg-1775727536907.png?v=v4f5l7');
+    background-image: radial-gradient(circle at center, rgba(0, 180, 255, 0.1) 0%, transparent 70%), url('https://skoop-dev-code-agent.s3.us-east-1.amazonaws.com/skoop-n8n-continue%2Faigen-1775653410959%2Fassets%2Fclock_bg-1775727536907.png?v=b1u2e3');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -192,7 +192,7 @@ body {
 
 .clock-card:hover {
     border-color: var(--primary-color);
-    background: rgba(255, 45, 117, 0.05);
+    background: rgba(0, 180, 255, 0.05);
 }
 
 .clock-card .city {
