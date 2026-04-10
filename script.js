@@ -217,7 +217,11 @@ document.addEventListener('DOMContentLoaded', () => {
     resizeCanvas();
 
     class Ripple {
-        constructor(x, y, isBottom = false) {
+        constructor() {
+            this.active = false;
+        }
+
+        init(x, y, isBottom = false) {
             this.x = x;
             this.y = y;
             this.radius = 1;
@@ -225,15 +229,19 @@ document.addEventListener('DOMContentLoaded', () => {
             this.opacity = isBottom ? 0.3 : 0.2;
             this.speed = isBottom ? 0.5 + Math.random() * 0.5 : 0.3 + Math.random() * 0.3;
             this.isBottom = isBottom;
+            this.active = true;
         }
 
         update() {
             this.radius += this.speed;
             this.opacity -= 0.005;
-            return this.opacity > 0 && this.radius < this.maxRadius;
+            if (this.opacity <= 0 || this.radius >= this.maxRadius) {
+                this.active = false;
+            }
         }
 
         draw() {
+            if (!this.active) return;
             ctx.strokeStyle = `rgba(255, 45, 117, ${this.opacity})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
@@ -249,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
     class Raindrop {
         constructor() {
             this.reset();
+            this.y = Math.random() * height; // Initial random position
         }
 
         reset() {
@@ -262,14 +271,21 @@ document.addEventListener('DOMContentLoaded', () => {
         update() {
             this.y += this.speed;
             if (this.y > height) {
-                if (Math.random() < 0.4) {
-                    ripples.push(new Ripple(this.x, height - 5, true));
+                if (weatherMode === 'rainy') {
+                    if (Math.random() < 0.4) {
+                        const ripple = getFromPool(ripplePool);
+                        if (ripple) ripple.init(this.x, height - 5, true);
+                    }
+                    this.reset();
+                } else {
+                    // When in flower mode, rain doesn't reset to the top
+                    this.y = -100; // Park it off-screen
                 }
-                this.reset();
             }
         }
 
         draw() {
+            if (this.y < 0 || this.y > height) return;
             ctx.strokeStyle = `rgba(255, 45, 117, ${this.opacity})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
@@ -279,14 +295,74 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    class Flower {
+        constructor() {
+            this.reset();
+            this.y = Math.random() * height; // Initial random position
+        }
+
+        reset() {
+            this.x = Math.random() * width;
+            this.y = -20 - (Math.random() * height);
+            this.size = 6 + Math.random() * 8;
+            this.speedY = 1 + Math.random() * 2;
+            this.speedX = (Math.random() - 0.5) * 1.5;
+            this.rotation = Math.random() * Math.PI * 2;
+            this.rotationSpeed = (Math.random() - 0.5) * 0.05;
+            this.opacity = 0.4 + Math.random() * 0.4;
+            this.drift = Math.random() * Math.PI * 2;
+        }
+
+        update() {
+            this.y += this.speedY;
+            this.drift += 0.01;
+            this.x += this.speedX + Math.sin(this.drift) * 0.8;
+            this.rotation += this.rotationSpeed;
+
+            if (this.y > height + 20) {
+                if (weatherMode === 'flowers') {
+                    this.reset();
+                } else {
+                    this.y = -100; // Park it off-screen
+                }
+            }
+        }
+
+        draw() {
+            if (this.y < -20 || this.y > height + 20) return;
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.rotation);
+            ctx.fillStyle = `rgba(255, 45, 117, ${this.opacity})`;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#ff2d75';
+
+            // Draw 5 petals
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                ctx.rotate((Math.PI * 2) / 5);
+                ctx.ellipse(0, -this.size / 2, this.size / 3, this.size / 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Center
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.beginPath();
+            ctx.arc(0, 0, this.size / 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+    }
+
     class Lightning {
         constructor() {
             this.segments = [];
-            this.create();
-            this.opacity = 1;
+            this.active = false;
         }
 
-        create() {
+        init() {
+            this.segments = [];
             let x = Math.random() * width;
             let y = 0;
             let segmentCount = 15 + Math.random() * 20;
@@ -298,11 +374,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 x = nextX;
                 y = nextY;
 
-                // Chance to branch
                 if (Math.random() < 0.1) {
                     this.createBranch(x, y, 5);
                 }
             }
+            this.opacity = 1;
+            this.active = true;
         }
 
         createBranch(x, y, count) {
@@ -316,6 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         draw() {
+            if (!this.active) return;
             ctx.strokeStyle = `rgba(255, 45, 117, ${this.opacity})`;
             ctx.lineWidth = 2;
             ctx.shadowBlur = 15;
@@ -341,27 +419,65 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         update() {
+            if (!this.active) return;
             this.opacity -= 0.05;
-            return this.opacity > 0;
+            if (this.opacity <= 0) {
+                this.active = false;
+            }
         }
     }
 
-    let lightnings = [];
-    let ripples = [];
+    const ripplePool = Array.from({ length: 50 }, () => new Ripple());
+    const lightningPool = Array.from({ length: 5 }, () => new Lightning());
+    let weatherMode = 'rainy';
+    let modeTimer = 20000; // Start with 20s of rain
+
     const raindrops = Array.from({ length: 150 }, () => new Raindrop());
+    const flowers = Array.from({ length: 40 }, () => {
+        const f = new Flower();
+        f.y = -100; // Start flowers off-screen
+        return f;
+    });
+
+    function getFromPool(pool) {
+        return pool.find(item => !item.active);
+    }
+
+    function switchWeather() {
+        if (weatherMode === 'rainy') {
+            weatherMode = 'flowers';
+            modeTimer = 15000 + Math.random() * 10000; // 15-25s of flowers
+            // Reactivate flowers
+            flowers.forEach(f => f.reset());
+        } else {
+            weatherMode = 'rainy';
+            modeTimer = 25000 + Math.random() * 15000; // 25-40s of rain
+            // Reactivate rain
+            raindrops.forEach(d => d.reset());
+        }
+    }
 
     function animate() {
         ctx.clearRect(0, 0, width, height);
 
+        // Update mode timer
+        modeTimer -= 16;
+        if (modeTimer <= 0) {
+            switchWeather();
+        }
+
         // Water effect on screen (random hits)
-        if (Math.random() < 0.05) {
-            ripples.push(new Ripple(Math.random() * width, Math.random() * height, false));
+        if (weatherMode === 'rainy' && Math.random() < 0.05) {
+            const ripple = getFromPool(ripplePool);
+            if (ripple) ripple.init(Math.random() * width, Math.random() * height, false);
         }
 
         // Draw and update ripples
-        ripples = ripples.filter(r => {
-            r.draw();
-            return r.update();
+        ripplePool.forEach(r => {
+            if (r.active) {
+                r.draw();
+                r.update();
+            }
         });
 
         // Draw and update rain
@@ -370,14 +486,23 @@ document.addEventListener('DOMContentLoaded', () => {
             drop.update();
         });
 
-        // Randomly add lightning
-        if (Math.random() < 0.01) {
-            lightnings.push(new Lightning());
+        // Draw and update flowers
+        flowers.forEach(flower => {
+            flower.draw();
+            flower.update();
+        });
+
+        // Randomly add lightning (only in rainy mode)
+        if (weatherMode === 'rainy' && Math.random() < 0.01) {
+            const lightning = getFromPool(lightningPool);
+            if (lightning) lightning.init();
         }
 
-        lightnings = lightnings.filter(l => {
-            l.draw();
-            return l.update();
+        lightningPool.forEach(l => {
+            if (l.active) {
+                l.draw();
+                l.update();
+            }
         });
 
         requestAnimationFrame(animate);
