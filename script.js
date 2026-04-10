@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         draw() {
             if (!this.active) return;
-            ctx.strokeStyle = `rgba(0, 180, 255, ${this.opacity})`;
+            ctx.strokeStyle = `rgba(255, 107, 0, ${this.opacity})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
             if (this.isBottom) {
@@ -286,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         draw() {
             if (this.y < 0 || this.y > height) return;
-            ctx.strokeStyle = `rgba(0, 180, 255, ${this.opacity})`;
+            ctx.strokeStyle = `rgba(255, 107, 0, ${this.opacity})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(this.x, this.y);
@@ -333,9 +333,9 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.save();
             ctx.translate(this.x, this.y);
             ctx.rotate(this.rotation);
-            ctx.fillStyle = `rgba(0, 180, 255, ${this.opacity})`;
+            ctx.fillStyle = `rgba(255, 107, 0, ${this.opacity})`;
             ctx.shadowBlur = 10;
-            ctx.shadowColor = '#00b4ff';
+            ctx.shadowColor = '#ff6b00';
 
             // Draw 5 petals
             for (let i = 0; i < 5; i++) {
@@ -394,10 +394,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         draw() {
             if (!this.active) return;
-            ctx.strokeStyle = `rgba(0, 180, 255, ${this.opacity})`;
+            ctx.strokeStyle = `rgba(255, 107, 0, ${this.opacity})`;
             ctx.lineWidth = 2;
             ctx.shadowBlur = 15;
-            ctx.shadowColor = '#00b4ff';
+            ctx.shadowColor = '#ff6b00';
 
             ctx.beginPath();
             this.segments.forEach(seg => {
